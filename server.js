@@ -6,6 +6,10 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+const users = new Map();
+
+app.use(express.static("client/dist"));
+
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -15,19 +19,11 @@ function getRandomColor() {
   return color;
 }
 
-// Serve the React app (assuming your React app is in a folder named 'client')
-app.use(express.static("client/dist"));
-
-const users = new Map();
-
 // WebSocket logic
 io.on("connection", (socket) => {
   console.log("A user connected");
-
-  // Generate a unique user ID
   const userId = socket.id;
 
-  // Store user information
   users.set(socket.id, {
     id: userId,
     color: getRandomColor(),
@@ -43,9 +39,7 @@ io.on("connection", (socket) => {
     text: `User ${userId} joined the chat`,
   });
 
-  // Handle chat messages
   socket.on("chat message", (msg) => {
-    // Emit the message with sender information
     io.emit("chat message", {
       sender: users.get(socket.id).id,
       text: msg,
@@ -54,22 +48,18 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", () => {
-    // Broadcast a typing alert to others
     socket.broadcast.emit("typing", {
       sender: users.get(socket.id).id,
     });
   });
 
   socket.on("stop typing", () => {
-    // Broadcast a stop typing alert to others
     socket.broadcast.emit("stop typing", {
       sender: users.get(socket.id).id,
     });
   });
 
-  // Handle disconnection
   socket.on("disconnect", () => {
-    // Broadcast a user left message to others
     socket.broadcast.emit("chat message", {
       sender: "system",
       text: `User ${userId} left the chat`,
@@ -80,7 +70,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start the server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

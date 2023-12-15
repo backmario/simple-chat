@@ -10,7 +10,7 @@ export const MessageInput = ({
       value={inputMessage}
       onChange={(e) => setInputMessage(e.target.value)}
       onKeyDown={handleKeyDown}
-      className="p-3 m-4 border border-stone-600 rounded-br-xl outline-none text-lg bg-transparent md:w-1/2 w-3/4"
+      className="p-3 m-4 border border-stone-600 rounded-br-xl outline-none text-lg bg-transparent w-full"
     />
   );
 };

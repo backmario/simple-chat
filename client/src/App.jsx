@@ -9,7 +9,6 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [userId, setUserId] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -39,27 +38,18 @@ function App() {
       }
     });
 
-    socket.on("typing", () => {
-      setIsTyping(true);
-    });
-
-    socket.on("stop typing", () => {
-      setIsTyping(false);
-    });
-
     // Clean up the socket connection when the component unmounts
     return () => {
       socket.disconnect();
     };
-  }, [isTyping]);
+  }, []);
 
   return (
-    <div className="font-inconsolata h-screen grid bg-stone-900 text-white content-between overflow-y-auto">
+    <div className="font-inconsolata h-screen grid bg-stone-900 text-white md:px-[15%] px-[10%] content-between overflow-y-auto">
       <div className="">
         <MessageContainer messages={messages} userId={userId} />
       </div>
       <div className="flex justify-center items-center">
-        {isTyping && <div>User is typing...</div>}
         <MessageInput
           inputMessage={inputMessage}
           setInputMessage={setInputMessage}
